@@ -16,10 +16,10 @@
 <script>
 	import { $video } from '../store.ts';
 
-	const playerEl = document.querySelector('.video-player');
-	const videoEl = document.querySelector('video');
-	const titleEl = document.querySelector('.video-title');
-	const linkEl = document.querySelector('.video-link');
+	const playerEl = document.querySelector('.video-player') as HTMLDivElement;
+	const videoEl = document.querySelector('video') as HTMLVideoElement;
+	const titleEl = document.querySelector('.video-title') as HTMLHeadingElement;
+	const linkEl = document.querySelector('.video-link') as HTMLAnchorElement;
 
 	$video.subscribe((video) => {
 		console.log(video);
@@ -43,6 +43,7 @@
 		inset-block-end: 0;
 		inset-inline: 0;
 		background: #ddd;
+		z-index: 10;
 
 		&.visible {
 			display: flex;

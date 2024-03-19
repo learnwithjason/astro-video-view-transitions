@@ -18,7 +18,9 @@ import VideoPlayer from '../components/video-player.astro';
 			<a href="/" rel="home">Home</a>
 		</header>
 
-		<slot />
+		<main>
+			<slot />
+		</main>
 
 		<VideoPlayer />
 		<style is:global>
@@ -41,11 +43,24 @@ import VideoPlayer from '../components/video-player.astro';
 					sans-serif;
 				font-size: 16px;
 				line-height: 1.45;
+				position: relative;
 			}
 
 			body {
 				margin: 0;
 				min-block-size: 100dvh;
+				padding-block-end: 4rem;
+				position: relative;
+
+				&:has(.video-player.visible) {
+					padding-block-end: calc(300px / (16 / 9) + 4rem);
+				}
+			}
+
+			main {
+				inline-size: min(90vw, 1920px);
+				margin-inline: auto;
+				z-index: 1;
 			}
 
 			:is(h1, h2, h3, h4, h5, h6) {
