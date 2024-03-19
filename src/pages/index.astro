@@ -1,16 +1,57 @@
 ---
+import { db, Video } from 'astro:db';
+import Layout from '../layouts/default.astro';
 
+const videos = await db.select().from(Video);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout>
+	<h1>Videos</h1>
+
+	<section class="videos">
+		{
+			videos.map((video) => {
+				return (
+					<div class="video">
+						<a href={`/video/${video.slug}`}>
+							<img
+								src={video.thumbnail}
+								alt={video.title}
+								transition:name={video.slug}
+							/>
+						</a>
+						<h2>{video.title}</h2>
+						<a href={`/video/${video.slug}`}>details</a>
+					</div>
+				);
+			})
+		}
+	</section>
+</Layout>
+
+<style>
+	.videos {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem;
+		justify-content: center;
+
+		& .video {
+			inline-size: 200px;
+
+			& img {
+				display: block;
+				height: auto;
+				width: 100%;
+			}
+
+			h2 {
+				margin-block: 0.5rem 0.25rem;
+			}
+
+			p {
+				margin-block: 0;
+			}
+		}
+	}
+</style>

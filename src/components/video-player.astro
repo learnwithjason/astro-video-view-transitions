@@ -1,0 +1,62 @@
+---
+// TODO why doesn’t animate="none" work?
+---
+
+<div class="video-player" transition:persist="video-player">
+	<video src="" controls></video>
+	<div class="video-details">
+		<h3 class="video-title"></h3>
+		<p><a href="" class="video-link">See video details</a></p>
+		<div class="controls">
+			<p>TODO: controls</p>
+		</div>
+	</div>
+</div>
+
+<script>
+	import { $video } from '../store.ts';
+
+	const playerEl = document.querySelector('.video-player');
+	const videoEl = document.querySelector('video');
+	const titleEl = document.querySelector('.video-title');
+	const linkEl = document.querySelector('.video-link');
+
+	$video.subscribe((video) => {
+		console.log(video);
+		if (!video) {
+			playerEl.classList.remove('visible');
+			return;
+		}
+
+		titleEl.textContent = video.title;
+		linkEl.href = `/video/${video.slug}`;
+		videoEl.src = video.url;
+		playerEl.classList.add('visible');
+		videoEl.play();
+	});
+</script>
+
+<style>
+	.video-player {
+		display: none;
+		position: fixed;
+		inset-block-end: 0;
+		inset-inline: 0;
+		background: #ddd;
+
+		&.visible {
+			display: flex;
+		}
+
+		video {
+			inline-size: 300px;
+			aspect-ratio: 16 / 9;
+			block-size: auto;
+			display: block;
+		}
+
+		& .video-details {
+			padding: 1rem;
+		}
+	}
+</style>

@@ -1,0 +1,107 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { db, Video } from 'astro:db';
+import Layout from '../../layouts/default.astro';
+
+export const getStaticPaths = (async () => {
+	const videos = await db.select().from(Video);
+
+	return videos.map((video) => {
+		return {
+			params: { slug: video.slug },
+			props: { video },
+		};
+	});
+}) satisfies GetStaticPaths;
+
+export interface Props {
+	video: any;
+}
+
+const { video } = Astro.props;
+---
+
+<Layout>
+	<h1>{video.title}</h1>
+	<div class="video-wrapper">
+		<button data-type="play" data-video={JSON.stringify(video)}>
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 440 440"
+				><g filter="url(#a)" opacity=".9"
+					><path fill="#fff" d="m158 335 184-115-184-115v230Z"></path></g
+				><defs
+					><filter
+						id="a"
+						width="192"
+						height="238"
+						x="154"
+						y="105"
+						color-interpolation-filters="sRGB"
+						filterUnits="userSpaceOnUse"
+						><feFlood flood-opacity="0" result="BackgroundImageFix"
+						></feFlood><feColorMatrix
+							in="SourceAlpha"
+							result="hardAlpha"
+							values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+						></feColorMatrix><feOffset dy="4"></feOffset><feGaussianBlur
+							stdDeviation="2"></feGaussianBlur><feColorMatrix
+							values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
+						></feColorMatrix><feBlend
+							in2="BackgroundImageFix"
+							result="effect1_dropShadow_4272_1041"></feBlend><feBlend
+							in="SourceGraphic"
+							in2="effect1_dropShadow_4272_1041"
+							result="shape"></feBlend></filter
+					></defs
+				></svg
+			>
+			<span class="visually-hidden">play</span></button
+		>
+		<img src={video.thumbnail} alt={video.title} transition:name={video.slug} />
+	</div>
+</Layout>
+
+<script>
+	import { updateVideo } from '../../store.ts';
+
+	document.addEventListener('astro:page-load', () => {
+		const playBtn = document.querySelector(
+			'[data-type="play"]',
+		) as HTMLButtonElement;
+
+		playBtn?.addEventListener('click', () => {
+			const video = JSON.parse(playBtn.dataset.video ?? '');
+
+			updateVideo(video);
+		});
+	});
+</script>
+
+<style>
+	.video-wrapper {
+		aspect-ratio: 16 / 9;
+		display: flex;
+		width: 100%;
+		position: relative;
+	}
+
+	button[data-type='play'] {
+		background: oklch(31.47% 0.162 315.53 / 0.85);
+		border: 1px solid oklch(84.67% 0.12 315.53 / 0.25);
+		border-radius: 50%;
+		color: white;
+		cursor: pointer;
+		display: block;
+		aspect-ratio: 1;
+		block-size: 4rem;
+		margin: auto;
+		position: relative;
+		z-index: 10;
+	}
+
+	img {
+		position: absolute;
+		inset: 0;
+		max-inline-size: 100%;
+		z-index: 1;
+	}
+</style>
